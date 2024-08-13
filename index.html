@@ -18,17 +18,25 @@
 
     <!-- My Style -->
     <link rel="stylesheet" href="css/style.css" />
+
+    <!-- AlpineJS -->
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+
+    <!-- App -->
+    <script src="src/app.js" async></script>
   </head>
   <body>
     <!-- Navbar Start -->
-    <nav class="navbar">
+    <nav class="navbar" x-data>
       <a href="#" class="navbar-logo">ang<span>nangkring</span>.</a>
 
       <div class="navbar-nav">
         <a href="#home">Home</a>
         <a href="#about">Tentang Kami</a>
-        <a href="#menu">Menu</a>
-        <a href="#products">Produk</a>
+        <a href="#products">Menu Kami</a>
         <a href="#contact">Kontak</a>
       </div>
 
@@ -36,6 +44,11 @@
         <a href="#" id="search-btn"><i data-feather="search"></i></a>
         <a href="#" id="shopping-cart-btn"
           ><i data-feather="shopping-cart"></i
+          ><span
+            class="quantity-badge"
+            x-show="$store.cart.quantity"
+            x-text="$store.cart.quantity"
+          ></span
         ></a>
         <a href="#" id="hamburger-menu"><i data-feather="menu"></i></a>
       </div>
@@ -49,29 +62,62 @@
 
       <!-- Shopping cart start -->
       <div class="shopping-cart">
-        <div class="cart-item">
-          <img src="img/menu/1.png" alt="produk1" />
-          <div class="item-detail">
-            <h3>Produk 1</h3>
-            <div class="item-price">Rp. 10.000</div>
+        <template x-for="(item, index) in $store.cart.items" x-keys="index">
+          <div class="cart-item">
+            <img :src="`img/menu/${item.img}`" :alt="item.name" />
+            <div class="item-detail">
+              <h3 x-text="item.name"></h3>
+              <div class="item-price">
+                <span x-text="rupiah(item.price)"></span> &times;
+                <button id="remove" @click="$store.cart.remove(item.id)">
+                  &minus;
+                </button>
+                <span x-text="item.quantity"></span>
+                <button id="add" @click="$store.cart.add(item)">&plus;</button>
+                &equals;
+                <span x-text="rupiah(item.total)"></span>
+              </div>
+            </div>
           </div>
-          <i data-feather="trash-2" class="remove-item"></i>
-        </div>
-        <div class="cart-item">
-          <img src="img/menu/1.png" alt="produk1" />
-          <div class="item-detail">
-            <h3>Produk 1</h3>
-            <div class="item-price">Rp. 10.000</div>
-          </div>
-          <i data-feather="trash-2" class="remove-item"></i>
-        </div>
-        <div class="cart-item">
-          <img src="img/menu/1.png" alt="produk1" />
-          <div class="item-detail">
-            <h3>Produk 1</h3>
-            <div class="item-price">Rp. 10.000</div>
-          </div>
-          <i data-feather="trash-2" class="remove-item"></i>
+        </template>
+        <h4 x-show="!$store.cart.items.lenght" style="margin-top: 1rem">
+          Total : <span x-text="rupiah($store.cart.total)"></span>
+        </h4>
+
+        <div class="form-container" x-show="!$store.cart.items.lenght">
+          <form action="" id="checkoutForm">
+            <input
+              type="hidden"
+              name="items"
+              x-model="JSON.stringify($store.cart.items)"
+            />
+            <input type="hidden" name="total" x-model="$store.cart.total" />
+            <h5>Customer Detail</h5>
+
+            <label for="name">
+              <span>Name</span>
+              <input type="text" name="name" id="name" />
+            </label>
+
+            <label for="email">
+              <span>Email</span>
+              <input type="email" name="email" id="email" />
+            </label>
+
+            <label for="phone">
+              <span>Phone</span>
+              <input type="number" name="phone" id="email" autocomplete="off" />
+            </label>
+
+            <button
+              class="checkout-btn disabled"
+              type="submit"
+              id="checkout-btn"
+              value="checkout"
+            >
+              Checkout
+            </button>
+          </form>
         </div>
       </div>
       <!-- Shopping cart end -->
@@ -83,7 +129,7 @@
       <main class="content">
         <h1>Kedai Angkringan <span>Nangkring</span>.</h1>
         <p>Buka Setiap Hari (18:00 - 00:00)</p>
-        <a href="https://wa.me/6289670592096?text=Mau Pesan Apa?" class="cta"
+        <a href="https://wa.me/6289670592096?text=Mau Pesan" class="cta"
           >Pesan Sekarang</a
         >
       </main>
@@ -114,94 +160,56 @@
     </section>
     <!-- About Section end -->
 
-    <!-- Menu Section start -->
-    <section id="menu" class="menu">
-      <h2><span>Menu</span> Kami</h2>
-      <p>Kami menyediakan berbagai makanan dan minuman</p>
-
-      <div class="row">
-        <div class="menu-card">
-          <img src="img/menu/1.png" alt="sateusus" />
-          <h3 class="menu-card-title">-Sate Usus-</h3>
-          <p class="menu-card-price">Rp. 3000</p>
-        </div>
-        <div class="menu-card">
-          <img src="img/menu/1.png" alt="sateusus" />
-          <h3 class="menu-card-title">-Sate Usus-</h3>
-          <p class="menu-card-price">Rp. 3000</p>
-        </div>
-        <div class="menu-card">
-          <img src="img/menu/1.png" alt="sateusus" />
-          <h3 class="menu-card-title">-Sate Usus-</h3>
-          <p class="menu-card-price">Rp. 3000</p>
-        </div>
-        <div class="menu-card">
-          <img src="img/menu/1.png" alt="sateusus" />
-          <h3 class="menu-card-title">-Sate Usus-</h3>
-          <p class="menu-card-price">Rp. 3000</p>
-        </div>
-        <div class="menu-card">
-          <img src="img/menu/1.png" alt="sateusus" />
-          <h3 class="menu-card-title">-Sate Usus-</h3>
-          <p class="menu-card-price">Rp. 3000</p>
-        </div>
-        <div class="menu-card">
-          <img src="img/menu/1.png" alt="sateusus" />
-          <h3 class="menu-card-title">-Sate Usus-</h3>
-          <p class="menu-card-price">Rp. 3000</p>
-        </div>
-      </div>
-    </section>
-    <!-- Menu Section end -->
-
     <!-- Produk section start -->
-    <section class="products" id="products">
-      <h2><span>Produk</span> Kami</h2>
+    <section class="products" id="products" x-data="products">
+      <h2><span>Menu</span> Kami</h2>
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta rerum
         sequi dolore consectetur. Non, doloribus.
       </p>
 
       <div class="row">
-        <div class="product-cart">
-          <div class="product-icons">
-            <a href="#"><i data-feather="shopping-cart"></i></a>
-            <a href="#" class="item-detail-btn"><i data-feather="eye"></i></a>
+        <template x-for="(item, index) in items" x-key="index">
+          <div class="product-cart">
+            <div class="product-icons">
+              <a href="#" @click.prevent="$store.cart.add(item)">
+                <svg
+                  width="24"
+                  height="24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <use href="img/feather-sprite.svg#shopping-cart" />
+                </svg>
+              </a>
+              <a href="#" class="item-detail-btn">
+                <svg
+                  width="24"
+                  height="24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <use href="img/feather-sprite.svg#eye" />
+                </svg>
+              </a>
+            </div>
+            <div class="product-img">
+              <img :src="`img/menu/${item.img}`" :alt="item.name" />
+            </div>
+            <div class="product-content">
+              <h3 x-text="item.name"></h3>
+              <div class="product-price">
+                <span x-text="rupiah(item.price)"></span>
+              </div>
+            </div>
           </div>
-          <div class="product-img">
-            <img src="img/menu/1.png" alt="produk1" />
-          </div>
-          <div class="product-content">
-            <h3>Sate Usus</h3>
-            <div class="product-price">Rp. 10.000</div>
-          </div>
-        </div>
-        <div class="product-cart">
-          <div class="product-icons">
-            <a href="#"><i data-feather="shopping-cart"></i></a>
-            <a href="#" class="item-detail-btn"><i data-feather="eye"></i></a>
-          </div>
-          <div class="product-img">
-            <img src="img/menu/2.png" alt="produk1" />
-          </div>
-          <div class="product-content">
-            <h3>Sate Kulit</h3>
-            <div class="product-price">Rp. 10.000</div>
-          </div>
-        </div>
-        <div class="product-cart">
-          <div class="product-icons">
-            <a href="#"><i data-feather="shopping-cart"></i></a>
-            <a href="#" class="item-detail-btn"><i data-feather="eye"></i></a>
-          </div>
-          <div class="product-img">
-            <img src="img/menu/3.png" alt="produk1" />
-          </div>
-          <div class="product-content">
-            <h3>Sosis & Baso Bakar</h3>
-            <div class="product-price">Rp. 10.000</div>
-          </div>
-        </div>
+        </template>
       </div>
     </section>
     <!-- Produk section end -->
